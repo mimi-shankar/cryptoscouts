@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Cryptid Club | Sparkly Secret HQ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Quicksand:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --unicorn-pink: #ffdef2;
+            --unicorn-purple: #e2d1f9;
+            --unicorn-blue: #d1e9ff;
+            --gold-sparkle: #ffd700;
+            --secret-pink: #ff85a1;
+        }
+        
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(-45deg, #fff5f8, #f0f4ff, #f3e8ff, #fff9e6);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #4a4a4a;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .typewriter { font-family: 'Special Elite', cursive; }
+        .sparkle-text { text-shadow: 0 0 10px rgba(255, 215, 0, 0.5), 0 0 20px rgba(255, 255, 255, 1); }
+
+        .iridescent-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 2px solid white;
+            box-shadow: 0 8px 32px 0 rgba(255, 182, 193, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .hidden-view { display: none; }
+
+        /* Enhanced Character Creator Styles */
+        .character-creator {
+            background: white;
+            border-radius: 50px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+            display: grid;
+            grid-template-cols: 1.2fr 1fr;
+            min-height: 700px;
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+
+        @media (max-width: 900px) {
+            .character-creator { grid-template-cols: 1fr; }
+        }
+
+        .stage-area {
+            background: radial-gradient(circle at center, #ffffff 0%, #f9faff 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 40px;
+        }
+
+        .closet-area {
+            background: #fff;
+            border-left: 1px solid #f1f5f9;
+            padding: 32px;
+            overflow-y: auto;
+            max-height: 750px;
+        }
+
+        .closet-item {
+            background: #f8fafc;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+            font-weight: 700;
+            color: #64748b;
+        }
+
+        .closet-item:hover {
+            background: #fff;
+            border-color: var(--secret-pink);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 133, 161, 0.1);
+        }
+
+        .closet-item.active {
+            background: #fff;
+            border-color: var(--secret-pink);
+            color: var(--secret-pink);
+            box-shadow: 0 10px 20px rgba(255, 133, 161, 0.15);
+        }
+
+        .swatch {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .swatch:hover { transform: scale(1.15); }
+        .swatch.active { outline: 3px solid var(--secret-pink); outline-offset: 3px; }
+
+        /* Evidence Image Mask */
+        .photo-mask {
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            border: 8px solid white;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            background: #f8fafc;
+        }
+        .photo-mask img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .photo-mask:hover img { transform: scale(1.05); }
+
+        .input-minimal {
+            border: none;
+            border-bottom: 3px solid #f1f5f9;
+            background: transparent;
+            padding: 12px 0;
+            width: 100%;
+            outline: none;
+            font-size: 1.5rem;
+            font-weight: 700;
+            transition: border-color 0.3s;
+        }
+        .input-minimal:focus { border-bottom-color: var(--secret-pink); }
+
+        /* Spinner */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--secret-pink);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Message Box */
+        #custom-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: white;
+            padding: 15px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--secret-pink);
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="fixed inset-0 pointer-events-none z-0" id="star-container"></div>
+    <div id="custom-message"></div>
+
+    <!-- MAIN HOME VIEW -->
+    <div id="view-main" class="relative z-10">
+        <nav class="p-8 flex justify-between items-center max-w-7xl mx-auto">
+            <div class="flex items-center gap-4 cursor-pointer" onclick="showView('main')">
+                <div class="w-12 h-12 bg-pink-400 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg">📸</div>
+                <span class="typewriter font-black text-2xl text-pink-500 tracking-tighter uppercase">Scout HQ</span>
+            </div>
+            <div class="flex gap-10 items-center font-bold text-sm tracking-widest text-gray-400">
+                <a href="#what-we-do" class="hover:text-pink-500 transition-colors">WHAT WE DO</a>
+                <button onclick="showView('members')" class="hover:text-pink-500 transition-colors">DIRECTORY</button>
+                <button onclick="showView('portal')" class="bg-black text-white px-8 py-3 rounded-2xl hover:bg-pink-500 transition-all shadow-xl">JOIN THE CLUB</button>
+            </div>
+        </nav>
+
+        <header class="py-32 text-center px-6">
+            <div class="stamp typewriter mb-8 text-sm bg-white inline-block px-4 py-2 uppercase tracking-widest">Gemini Discovery AI Active</div>
+            <h1 class="text-7xl md:text-9xl font-black typewriter mb-8 sparkle-text tracking-tighter leading-none">
+                CRYPTO <br><span class="text-pink-400">SCOUTS</span>
+            </h1>
+            <p class="text-2xl text-gray-400 max-w-2xl mx-auto mb-16 leading-relaxed font-medium italic">"Tell us the story, Gemini will find the name."</p>
+            <button onclick="showView('portal')" class="bg-pink-400 text-white px-16 py-6 rounded-3xl font-black text-2xl hover:bg-black transition-all shadow-2xl hover:scale-105 active:scale-95 uppercase tracking-widest">
+                START ENROLLMENT
+            </button>
+        </header>
+
+        <!-- WHAT WE DO SECTION -->
+        <section id="what-we-do" class="max-w-7xl mx-auto py-24 px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-5xl font-black typewriter uppercase text-slate-800 sparkle-text">Club Activities</h2>
+                <p class="text-gray-400 mt-4 text-xl">The life of a Secret Scout.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="iridescent-card p-10 rounded-[40px] text-center border-b-4 border-pink-200">
+                    <div class="text-5xl mb-6">🪄</div>
+                    <h4 class="text-xl font-bold typewriter uppercase mb-4">Discovery Lab</h4>
+                    <p class="text-gray-400 text-sm">Describe the creature and tell your story. Our AI Scanner generates the image and Gemini picks a magical name for you.</p>
+                </div>
+                <div class="iridescent-card p-10 rounded-[40px] text-center border-b-4 border-purple-200">
+                    <div class="text-5xl mb-6">👔</div>
+                    <h4 class="text-xl font-bold typewriter uppercase mb-4">Dressing Room</h4>
+                    <p class="text-gray-400 text-sm">Every scout designs their cartoon avatar and picks an official field uniform for expeditions.</p>
+                </div>
+                <div class="iridescent-card p-10 rounded-[40px] text-center border-b-4 border-blue-200">
+                    <div class="text-5xl mb-6">🧼</div>
+                    <h4 class="text-xl font-bold typewriter uppercase mb-4">Pet Sanctuary</h4>
+                    <p class="text-gray-400 text-sm">Alice the toy Axolotl is our honorary mascot! Even toy babies can be explorers here.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FIELD FILES -->
+        <section id="reports" class="py-24 px-6 max-w-7xl mx-auto border-t border-gray-100">
+            <div class="text-center mb-20">
+                <h2 class="text-4xl font-black typewriter uppercase text-slate-800">The Field Files</h2>
+                <div class="flex justify-center gap-4 mt-4">
+                    <span class="bg-slate-100 px-4 py-2 rounded-full text-xs font-black uppercase text-slate-400">Scouts: <span id="member-count-badge">0</span></span>
+                    <span class="bg-pink-100 px-4 py-2 rounded-full text-xs font-black uppercase text-pink-400">Discoveries: <span id="report-count-badge">0</span></span>
+                </div>
+            </div>
+            <div id="reports-grid" class="grid grid-cols-1 md:grid-cols-3 gap-12"></div>
+        </section>
+    </div>
+
+    <!-- DISCOVERY LAB MODAL -->
+    <div id="view-generator" class="hidden-view min-h-screen bg-slate-900 py-12 px-6 relative z-10 flex flex-col items-center justify-center">
+        <div class="max-w-2xl w-full bg-white rounded-[50px] p-12 shadow-2xl overflow-hidden">
+            <button onclick="showView('main')" class="text-slate-400 font-bold mb-8 uppercase tracking-widest text-sm hover:text-black">✕ Close Scanner</button>
+            
+            <!-- STAGE 1: Describe Appearance -->
+            <div id="gen-input-stage">
+                <h2 class="text-4xl font-black typewriter mb-4 uppercase">1. Scan Area</h2>
+                <p class="text-slate-400 mb-8 text-sm">Describe the creature to initialize the holographic camera.</p>
+                <textarea id="cryptid-description" placeholder="A magical creature with iridescent wings..." class="w-full bg-slate-50 rounded-3xl p-8 text-xl outline-none focus:ring-4 focus:ring-pink-100 min-h-[120px] mb-8 border-none"></textarea>
+                <button onclick="handleGenerateImage()" class="w-full bg-black text-white py-6 rounded-3xl font-black text-xl uppercase tracking-widest hover:bg-pink-500 transition-all shadow-xl">
+                    CAPTURE PHOTO
+                </button>
+            </div>
+
+            <!-- STAGE 2: Loading -->
+            <div id="gen-loading-stage" class="hidden-view flex flex-col items-center justify-center py-20">
+                <div class="loader mb-6"></div>
+                <p id="loading-text" class="text-slate-400 typewriter animate-pulse">Initializing Hologram...</p>
+            </div>
+
+            <!-- STAGE 3: Image Check -->
+            <div id="gen-result-stage" class="hidden-view text-center">
+                <div class="photo-mask aspect-square mb-8">
+                    <img id="generated-image" src="" alt="Captured Cryptid">
+                </div>
+                <h3 class="text-2xl font-black mb-8 typewriter">Is the picture right?</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="showGenStage('story')" class="bg-green-500 text-white py-6 rounded-3xl font-black text-xl uppercase tracking-widest hover:bg-green-600 shadow-lg">YES, RIGHT!</button>
+                    <button onclick="showGenStage('input')" class="bg-red-500 text-white py-6 rounded-3xl font-black text-xl uppercase tracking-widest hover:bg-red-600 shadow-lg">NO, WRONG</button>
+                </div>
+            </div>
+
+            <!-- STAGE 4: Story & AI Name -->
+            <div id="gen-story-stage" class="hidden-view">
+                <h2 class="text-4xl font-black typewriter mb-4 uppercase text-pink-500">2. The Story</h2>
+                <p class="text-slate-400 mb-8 text-sm">How did you find it? (Example: Did it swim away like Alice?)</p>
+                <div class="space-y-8">
+                    <textarea id="cryptid-story" placeholder="Tell the story of how you found it..." class="w-full bg-slate-50 rounded-3xl p-8 text-xl outline-none focus:ring-4 focus:ring-pink-100 min-h-[150px] mb-4 border-none"></textarea>
+                    <button onclick="handleGenerateName()" class="w-full bg-pink-400 text-white py-6 rounded-3xl font-black text-xl uppercase tracking-widest hover:bg-black transition-all shadow-xl">
+                        GET GEMINI NAME & POST
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PHASE 1: QUESTIONS -->
+    <div id="view-portal" class="hidden-view min-h-screen bg-white py-24 px-6 relative z-10">
+        <div class="max-w-2xl mx-auto">
+            <div class="mb-20">
+                <h2 class="text-6xl font-black typewriter mb-6 uppercase">Recruitment Dossier</h2>
+                <p class="text-xl text-gray-400">Finalize your paperwork before joining the society.</p>
+            </div>
+            <form id="membership-form" class="space-y-16">
+                <div class="space-y-12">
+                    <div>
+                        <label class="text-xs font-black text-pink-400 uppercase tracking-widest block mb-3 uppercase">Real Human Name</label>
+                        <input type="text" id="form-name" required placeholder="Full Name" class="input-minimal">
+                    </div>
+                    <div>
+                        <label class="text-xs font-black text-pink-400 uppercase tracking-widest block mb-3 uppercase">Code-Name</label>
+                        <input type="text" id="form-nickname" required placeholder="Pixel_Panda" class="input-minimal">
+                    </div>
+                    <div>
+                        <label class="text-xs font-black text-pink-400 uppercase tracking-widest block mb-3 uppercase">Short Bio</label>
+                        <textarea id="form-bio" placeholder="Why do you want to join?" class="w-full bg-slate-50 rounded-3xl p-10 text-xl outline-none focus:ring-4 focus:ring-pink-100 min-h-[150px] border-none"></textarea>
+                    </div>
+                </div>
+                <button type="button" onclick="goToAvatar()" class="w-full bg-black text-white py-8 rounded-[2.5rem] font-black text-2xl uppercase tracking-widest shadow-2xl hover:bg-pink-500 transition-all">
+                    Next: Enter Dressing Room
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- PHASE 2: AVATAR DRESSING ROOM -->
+    <div id="view-avatar" class="hidden-view min-h-screen bg-slate-50 py-16 px-6 relative z-10">
+        <div class="max-w-6xl mx-auto">
+            <div class="mb-12 flex flex-col md:flex-row justify-between items-center gap-6">
+                <div>
+                    <h2 class="text-5xl font-black typewriter uppercase">The Dressing Room</h2>
+                    <p class="text-xl text-gray-400 mt-2">Pick your official uniform for field research.</p>
+                </div>
+                <div class="flex bg-white p-2 rounded-3xl shadow-xl border border-gray-100">
+                    <button id="btn-girl" onclick="setGender('girl')" class="px-10 py-4 rounded-2xl font-black text-lg bg-pink-400 text-white transition-all shadow-lg">GIRL</button>
+                    <button id="btn-boy" onclick="setGender('boy')" class="px-10 py-4 rounded-2xl font-black text-lg text-gray-400 hover:text-black transition-all">BOY</button>
+                </div>
+            </div>
+            <div class="character-creator">
+                <div class="stage-area">
+                    <div id="avatar-preview-box" class="w-[350px] h-[550px]">
+                        <svg viewBox="0 0 100 160" class="w-full h-full drop-shadow-2xl">
+                            <rect id="part-leg-l" x="38" y="125" width="8" height="30" rx="4" fill="#ffe0bd" />
+                            <rect id="part-leg-r" x="54" y="125" width="8" height="30" rx="4" fill="#ffe0bd" />
+                            <rect id="part-arm-l" x="20" y="70" width="8" height="40" rx="4" fill="#ffe0bd" transform="rotate(15, 24, 70)" />
+                            <rect id="part-arm-r" x="72" y="70" width="8" height="40" rx="4" fill="#ffe0bd" transform="rotate(-15, 76, 70)" />
+                            <circle id="part-hand-l" cx="16" cy="110" r="5.5" fill="#ffe0bd" />
+                            <circle id="part-hand-r" cx="84" cy="110" r="5.5" fill="#ffe0bd" />
+                            <rect id="part-neck" x="46" y="52" width="8" height="12" fill="#ffe0bd" />
+                            <path id="part-face" d="M30 35 Q30 15 50 15 Q70 15 70 35 Q70 55 50 55 Q30 55 30 35" fill="#ffe0bd" />
+                            <path id="cloth-bottom" d="M35 105 L65 105 L68 135 L32 135 Z" fill="#334155" />
+                            <path id="cloth-top" d="M28 65 Q50 55 72 65 L78 115 L22 115 Z" fill="#ff85a1" />
+                            <g id="face-eyes">
+                                <circle cx="42" cy="35" r="4" fill="white" /><circle cx="42" cy="35" r="1.5" fill="#333" />
+                                <circle cx="58" cy="35" r="4" fill="white" /><circle cx="58" cy="35" r="1.5" fill="#333" />
+                            </g>
+                            <path id="face-mouth" d="M44 48 Q50 52 56 48" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round" />
+                            <path id="hair-back" d="" fill="#4a3000" />
+                            <path id="hair-front" d="" fill="#4a3000" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="closet-area">
+                    <div class="space-y-12">
+                        <section>
+                            <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Skin Tone</h4>
+                            <div class="flex gap-4">
+                                <div class="swatch" style="background: #ffe0bd" onclick="updatePart('skin', '#ffe0bd')"></div>
+                                <div class="swatch" style="background: #eecfb4" onclick="updatePart('skin', '#eecfb4')"></div>
+                                <div class="swatch" style="background: #955e36" onclick="updatePart('skin', '#955e36')"></div>
+                            </div>
+                        </section>
+                        <section>
+                            <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Hairstyles</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="closet-item active" onclick="updatePart('hair', 'short')">Clean Cut</div>
+                                <div class="closet-item" onclick="updatePart('hair', 'long')">Long & Flowy</div>
+                                <div class="closet-item" onclick="updatePart('hair', 'buns')">Double Buns</div>
+                                <div class="closet-item" onclick="updatePart('hair', 'messy')">Messy Style</div>
+                            </div>
+                        </section>
+                        <section>
+                            <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Official Uniform</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="closet-item active" onclick="updatePart('outfit', 'pink')">Pink Uniform</div>
+                                <div class="closet-item" onclick="updatePart('outfit', 'blue')">Blue Uniform</div>
+                                <div class="closet-item" onclick="updatePart('outfit', 'green')">Forest Uniform</div>
+                                <div class="closet-item" onclick="updatePart('outfit', 'black')">Night Uniform</div>
+                            </div>
+                        </section>
+                        <button onclick="finishEnrollment()" class="w-full bg-pink-400 text-white py-6 rounded-3xl font-black text-xl uppercase shadow-2xl hover:scale-105 active:scale-95 transition-transform">
+                            Complete Enrollment ✨
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DIRECTORY -->
+    <div id="view-members" class="hidden-view min-h-screen bg-white py-24 px-6 relative z-10">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex justify-between items-end mb-20">
+                <div>
+                    <h2 class="text-7xl font-black typewriter text-slate-800 tracking-tighter leading-none uppercase">The <br><span class="text-pink-400">Society.</span></h2>
+                    <p class="text-xl text-gray-400 mt-4 font-bold uppercase tracking-widest">Active Scout Directory</p>
+                </div>
+                <button onclick="showView('main')" class="text-sm font-black text-gray-400 hover:text-black uppercase tracking-widest underline underline-offset-8">Return Home</button>
+            </div>
+            <div id="member-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12"></div>
+        </div>
+    </div>
+
+    <script>
+        const apiKey = ""; 
+
+        // --- DATA ---
+        let avatarState = { gender: 'girl', skin: '#ffe0bd', hair: 'short', hairColor: '#4a3000', outfit: 'pink' };
+        let members = [
+            { nickname: 'Meera', power: 'Unicorn Sight', bio: 'Founder and lead scout. Catching sparkles in the dark!', avatar: { gender: 'girl', skin: '#eecfb4', hair: 'buns', hairColor: '#a55eea', outfit: 'blue' } },
+            { nickname: 'Alice', power: 'Amphibious Scout', bio: 'Alice is my toy Axolotl! She ran away and swam back to join the club. Welcome home Alice!', avatar: { gender: 'girl', skin: '#ffdef2', hair: 'long', hairColor: '#ff85a1', outfit: 'pink' }, isAxolotl: true },
+            { nickname: 'Shadow', power: 'Invisibility', bio: 'I specialize in night research wearing the midnight uniforms.', avatar: { gender: 'boy', skin: '#955e36', hair: 'messy', hairColor: '#4a3000', outfit: 'black' } }
+        ];
+        let fieldReports = [
+            { id: 1, title: 'Glitter Moth', status: 'VERIFIED', image: 'http://googleusercontent.com/image_generation_content/2', story: 'I followed a trail of purple dust to a Whispering Lily.' }
+        ];
+
+        // --- NAVIGATION & STAGES ---
+        function showView(viewName) {
+            document.querySelectorAll('div[id^="view-"]').forEach(v => v.classList.add('hidden-view'));
+            const target = document.getElementById('view-' + viewName);
+            if (target) target.classList.remove('hidden-view');
+            window.scrollTo(0, 0);
+        }
+
+        function showGenStage(stage) {
+            document.getElementById('gen-input-stage').classList.add('hidden-view');
+            document.getElementById('gen-loading-stage').classList.add('hidden-view');
+            document.getElementById('gen-result-stage').classList.add('hidden-view');
+            document.getElementById('gen-story-stage').classList.add('hidden-view');
+            document.getElementById(`gen-${stage}-stage`).classList.remove('hidden-view');
+        }
+
+        function showMessage(msg) {
+            const el = document.getElementById('custom-message');
+            el.innerText = msg;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 4000);
+        }
+
+        // --- DISCOVERY AI LOGIC ---
+        async function handleGenerateImage() {
+            const desc = document.getElementById('cryptid-description').value;
+            if (!desc) { showMessage("Please describe the creature first!"); return; }
+
+            showGenStage('loading');
+            document.getElementById('loading-text').innerText = "Scanning Area...";
+
+            const prompt = `A high-quality whimsical cartoon illustration of a magical cryptid: ${desc}. Sparkling iridescent textures, vibrant colors, magical forest at twilight.`;
+            
+            try {
+                let response = null;
+                for (let i = 0; i < 5; i++) {
+                    try {
+                        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ instances: [{ prompt }], parameters: { sampleCount: 1 } })
+                        });
+                        response = await res.json();
+                        if (response.predictions) break;
+                    } catch (e) { await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000)); }
+                }
+
+                if (response && response.predictions) {
+                    document.getElementById('generated-image').src = `data:image/png;base64,${response.predictions[0].bytesBase64Encoded}`;
+                    showGenStage('result');
+                } else { throw new Error('Image creation failed'); }
+            } catch (err) {
+                showMessage("The Hologram failed! Let's try again.");
+                showGenStage('input');
+            }
+        }
+
+        async function handleGenerateName() {
+            const desc = document.getElementById('cryptid-description').value;
+            const story = document.getElementById('cryptid-story').value;
+            if (!story) { showMessage("Tell us the story of how you found it!"); return; }
+
+            showGenStage('loading');
+            document.getElementById('loading-text').innerText = "Gemini is analyzing story...";
+
+            const systemPrompt = "You are the head zoologist. Based on the description and discovery story, pick a single, unique, 1-3 word magical name for this cryptid. Respond ONLY with the name.";
+            const userQuery = `Description: ${desc}\nStory: ${story}`;
+
+            try {
+                let response = null;
+                for (let i = 0; i < 5; i++) {
+                    try {
+                        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ contents: [{ parts: [{ text: userQuery }] }], systemInstruction: { parts: [{ text: systemPrompt }] } })
+                        });
+                        response = await res.json();
+                        if (response.candidates) break;
+                    } catch (e) { await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000)); }
+                }
+
+                const name = response.candidates?.[0]?.content?.parts?.[0]?.text || "Mysterious Specimen";
+                
+                fieldReports.unshift({
+                    id: Date.now(),
+                    title: name.trim(),
+                    status: 'VERIFIED',
+                    image: document.getElementById('generated-image').src,
+                    story: story
+                });
+
+                renderReports();
+                showView('main');
+                showMessage(`New Discovery Logged: ${name}!`);
+            } catch (err) {
+                showMessage("Gemini's analysis failed! Publishing as unknown.");
+                finalPublishManual();
+            }
+        }
+
+        function finalPublishManual() {
+            fieldReports.unshift({
+                id: Date.now(),
+                title: "Unknown Cryptid",
+                status: 'VERIFIED',
+                image: document.getElementById('generated-image').src,
+                story: document.getElementById('cryptid-story').value
+            });
+            renderReports(); showView('main');
+        }
+
+        // --- AVATAR & RECRUITMENT ---
+        function setGender(g) { avatarState.gender = g; updateAvatarPreview(); }
+        const hairstyles = {
+            short: { front: "M35 25 Q50 10 65 25 L68 35 Q50 30 32 35 Z", back: "" },
+            long: { front: "M35 25 Q50 10 65 25", back: "M30 35 L22 80 Q50 90 78 80 L70 35 Z" },
+            buns: { front: "M35 25 Q50 10 65 25", back: "M25 25 A8 8 0 1 1 35 25 M65 25 A8 8 0 1 1 75 25" },
+            messy: { front: "M30 25 L35 15 L45 22 L50 10 L55 22 L65 15 L70 25 Z", back: "" }
+        };
+        const outfits = {
+            pink: { top: "#ff85a1", bottom: "#334155" },
+            blue: { top: "#60a5fa", bottom: "#1e293b" },
+            green: { top: "#4ade80", bottom: "#14532d" },
+            black: { top: "#334155", bottom: "#020617" }
+        };
+
+        function updatePart(part, value) {
+            avatarState[part] = value;
+            if(part === 'hair' || part === 'outfit') {
+                event.target.parentElement.querySelectorAll('.closet-item').forEach(el => el.classList.remove('active'));
+                event.target.classList.add('active');
+            }
+            updateAvatarPreview();
+        }
+
+        function updateAvatarPreview() {
+            const state = avatarState;
+            const gb = document.getElementById('btn-girl');
+            const bb = document.getElementById('btn-boy');
+            if(gb && bb) {
+                if(state.gender === 'girl') { gb.className = bb.className.replace('bg-pink-400 text-white',''); gb.classList.add('bg-pink-400','text-white'); }
+                else { bb.className = gb.className.replace('bg-pink-400 text-white',''); bb.classList.add('bg-pink-400','text-white'); }
+            }
+            ['part-face', 'part-neck', 'part-arm-l', 'part-arm-r', 'part-leg-l', 'part-leg-r', 'part-hand-l', 'part-hand-r'].forEach(id => {
+                const el = document.getElementById(id); if (el) el.setAttribute('fill', state.skin);
+            });
+            document.getElementById('hair-front').setAttribute('d', hairstyles[state.hair].front);
+            document.getElementById('hair-front').setAttribute('fill', state.hairColor);
+            document.getElementById('hair-back').setAttribute('d', hairstyles[state.hair].back);
+            document.getElementById('hair-back').setAttribute('fill', state.hairColor);
+            document.getElementById('cloth-top').setAttribute('fill', outfits[state.outfit].top);
+            document.getElementById('cloth-bottom').setAttribute('fill', outfits[state.outfit].bottom);
+        }
+
+        function getAvatarSVG(state, isAxolotl = false) {
+            if (isAxolotl) return `<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="40" fill="#ffdef2" /><circle cx="35" cy="45" r="4" fill="#333" /><circle cx="65" cy="45" r="4" fill="#333" /><path d="M40 60 Q50 70 60 60" stroke="#ff85a1" stroke-width="3" fill="none" stroke-linecap="round" /></svg>`;
+            const h = hairstyles[state.hair], o = outfits[state.outfit], mouthD = state.gender === 'girl' ? 'M44 48 Q50 52 56 48' : 'M45 49 L55 49';
+            return `<svg viewBox="0 0 100 160" class="w-full h-full"><path d="${h.back}" fill="${state.hairColor}" /><rect x="38" y="125" width="8" height="30" rx="4" fill="${state.skin}" /><rect x="54" y="125" width="8" height="30" rx="4" fill="${state.skin}" /><rect x="20" y="70" width="8" height="40" rx="4" fill="${state.skin}" transform="rotate(15, 24, 70)" /><rect x="72" y="70" width="8" height="40" rx="4" fill="${state.skin}" transform="rotate(-15, 76, 70)" /><circle cx="16" cy="110" r="5.5" fill="${state.skin}" /><circle cx="84" cy="110" r="5.5" fill="${state.skin}" /><rect x="46" y="52" width="8" height="12" fill="${state.skin}" /><path d="M30 35 Q30 15 50 15 Q70 15 70 35 Q70 55 50 55 Q30 55 30 35" fill="${state.skin}" /><path d="M35 105 L65 105 L68 135 L32 135 Z" fill="${o.bottom}" /><path d="M28 65 Q50 55 72 65 L78 115 L22 115 Z" fill="${o.top}" /><g><circle cx="42" cy="35" r="3" fill="white" /><circle cx="42" cy="35" r="1.5" fill="#333" /><circle cx="58" cy="35" r="3" fill="white" /><circle cx="58" cy="35" r="1.5" fill="#333" /></g><path d="${mouthD}" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round" /><path d="${h.front}" fill="${state.hairColor}" /></svg>`;
+        }
+
+        function renderReports() {
+            const grid = document.getElementById('reports-grid'); if (!grid) return;
+            grid.innerHTML = fieldReports.map(r => `<div class="iridescent-card p-8 rounded-[40px] group"><div class="photo-mask aspect-square mb-8">${r.image ? `<img src="${r.image}" alt="${r.title}">` : `<div class="w-full h-full bg-slate-50 flex items-center justify-center text-7xl">🧬</div>`}</div><h3 class="text-2xl font-black typewriter text-slate-800 uppercase">${r.title}</h3><p class="text-xs text-gray-400 mt-2 font-medium italic mb-2">"${r.story || 'Log entry missing...'}"</p><p class="text-[10px] text-pink-400 uppercase font-black tracking-widest">${r.status}</p></div>`).join('') + `<div onclick="showView('generator')" class="border-4 border-dashed border-pink-100 rounded-[40px] p-8 flex flex-col items-center justify-center text-center hover:bg-white transition-all cursor-pointer group"><div class="w-20 h-20 rounded-full bg-pink-50 flex items-center justify-center mb-6 text-4xl group-hover:scale-110 transition-transform">🪄</div><h3 class="typewriter text-xl font-bold text-pink-300 uppercase">Scanner Lab</h3></div>`;
+            document.getElementById('report-count-badge').innerText = fieldReports.length;
+        }
+
+        function renderMembers() {
+            const grid = document.getElementById('member-grid'); if (!grid) return;
+            grid.innerHTML = members.map(m => `<div class="iridescent-card p-10 rounded-[50px] border-b-8 border-gray-100 group hover:border-pink-200 transition-all"><div class="w-44 h-44 bg-white rounded-full mx-auto mb-8 border-8 border-white shadow-xl overflow-hidden group-hover:scale-110 transition-transform flex items-center justify-center">${getAvatarSVG(m.avatar, m.isAxolotl)}</div><div class="text-center"><h3 class="text-3xl font-black typewriter text-slate-800 uppercase">${m.nickname}</h3><div class="inline-block bg-pink-50 text-pink-500 px-4 py-1 rounded-full text-xs font-black uppercase mt-2 mb-6 tracking-widest">${m.isAxolotl ? 'Axolotl Scout' : m.power}</div><p class="text-gray-400 italic text-sm px-4">"${m.bio}"</p></div></div>`).join('');
+            document.getElementById('member-count-badge').innerText = members.length;
+        }
+
+        function goToAvatar() { if(document.getElementById('form-name').value && document.getElementById('form-nickname').value) showView('avatar'); }
+        function finishEnrollment() {
+            members.unshift({ nickname: document.getElementById('form-nickname').value, power: 'Scout Recruit', bio: document.getElementById('form-bio').value, avatar: JSON.parse(JSON.stringify(avatarState)) });
+            renderMembers(); showView('members');
+        }
+
+        window.onload = function() {
+            const sc = document.getElementById('star-container');
+            for(let i=0; i<60; i++) {
+                const s = document.createElement('div'); s.style.position = 'absolute'; s.style.width = Math.random()*3 + 'px'; s.style.height = s.style.width; s.style.background = '#fff'; s.style.borderRadius = '50%'; s.style.top = Math.random()*100 + '%'; s.style.left = Math.random()*100 + '%'; s.style.opacity = Math.random(); sc.appendChild(s);
+            }
+            updateAvatarPreview(); renderMembers(); renderReports();
+        };
+    </script>
+</body>
+</html>
