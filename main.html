@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Cryptid Club | Sparkly Secret HQ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Quicksand:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --unicorn-pink: #ffdef2;
+            --unicorn-purple: #e2d1f9;
+            --unicorn-blue: #d1e9ff;
+            --gold-sparkle: #ffd700;
+            --secret-pink: #ff85a1;
+        }
+        
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(-45deg, #fff5f8, #f0f4ff, #f3e8ff, #fff9e6);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #4a4a4a;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .typewriter { font-family: 'Special Elite', cursive; }
+        .sparkle-text { text-shadow: 0 0 10px rgba(255, 215, 0, 0.5), 0 0 20px rgba(255, 255, 255, 1); }
+
+        .iridescent-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 2px solid white;
+            box-shadow: 0 8px 32px 0 rgba(255, 182, 193, 0.3);
+        }
+
+        .hidden-view { display: none; }
+
+        /* Character Creator Styles */
+        .character-creator {
+            background: white;
+            border-radius: 50px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+            display: grid;
+            grid-template-cols: 1.2fr 1fr;
+            min-height: 700px;
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+
+        @media (max-width: 900px) {
+            .character-creator { grid-template-cols: 1fr; }
+        }
+
+        .stage-area {
+            background: radial-gradient(circle at center, #ffffff 0%, #f9faff 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 40px;
+        }
+
+        .closet-area {
+            background: #fff;
+            border-left: 1px solid #f1f5f9;
+            padding: 32px;
+            overflow-y: auto;
+            max-height: 750px;
+        }
+
+        .closet-item {
+            background: #f8fafc;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+            font-weight: 700;
+            color: #64748b;
+        }
+
+        .closet-item:hover {
+            background: #fff;
+            border-color: var(--secret-pink);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 133, 161, 0.1);
+        }
+
+        .closet-item.active {
+            background: #fff;
+            border-color: var(--secret-pink);
+            color: var(--secret-pink);
+            box-shadow: 0 10px 20px rgba(255, 133, 161, 0.15);
+        }
+
+        .swatch {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .swatch:hover { transform: scale(1.15); }
+        .swatch.active { outline: 3px solid var(--secret-pink); outline-offset: 3px; }
+
+        .input-minimal {
+            border: none;
+            border-bottom: 3px solid #f1f5f9;
+            background: transparent;
+            padding: 12px 0;
+            width: 100%;
+            outline: none;
+            font-size: 1.5rem;
+            font-weight: 700;
+            transition: border-color 0.3s;
+        }
+
+        .input-minimal:focus { border-bottom-color: var(--secret-pink); }
+
+        .avatar-container svg {
+            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.1));
+        }
+    </style>
+</head>
+<body>
+    <div class="fixed inset-0 pointer-events-none z-0" id="star-container"></div>
+
+    <!-- HOME VIEW -->
+    <div id="view-main" class="relative z-10">
+        <nav class="p-8 flex justify-between items-center max-w-7xl mx-auto">
+            <div class="flex items-center gap-4 cursor-pointer" onclick="showView('main')">
+                <div class="w-12 h-12 bg-pink-400 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg">🦄</div>
+                <span class="typewriter font-black text-2xl text-pink-500 tracking-tighter">THE CIRCLE</span>
+            </div>
+            <div class="flex gap-10 items-center font-bold text-sm tracking-widest text-gray-400">
+                <button onclick="showView('members')" class="hover:text-pink-500 transition-colors">DIRECTORY</button>
+                <button onclick="showView('portal')" class="bg-black text-white px-8 py-3 rounded-2xl hover:bg-pink-500 transition-all shadow-xl">JOIN HQ</button>
+            </div>
+        </nav>
+
+        <header class="py-40 text-center px-6">
+            <div class="stamp typewriter mb-8 text-sm bg-white inline-block px-4 py-2">ZOOLOGIST ENROLLMENT OPEN</div>
+            <h1 class="text-7xl md:text-9xl font-black typewriter mb-8 sparkle-text tracking-tighter leading-none">
+                CRYPTO <br><span class="text-pink-400">SCOUTS</span>
+            </h1>
+            <p class="text-2xl text-gray-400 max-w-2xl mx-auto mb-16 leading-relaxed">We track the glitter moths and tree octopuses. Join Meera's team and start your field journal.</p>
+            <button onclick="showView('portal')" class="bg-pink-400 text-white px-16 py-6 rounded-3xl font-black text-2xl hover:bg-black transition-all shadow-2xl hover:scale-105 active:scale-95">
+                JOIN THE CLUB
+            </button>
+        </header>
+
+        <section class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 px-6 pb-40">
+            <div class="iridescent-card p-12 rounded-[50px] border-b-8 border-pink-100">
+                <h3 class="typewriter text-3xl font-bold mb-6 text-pink-400">Latest Intel</h3>
+                <div class="aspect-video bg-white/80 rounded-3xl mb-6 flex items-center justify-center text-8xl shadow-inner">🦋</div>
+                <p class="text-lg text-gray-500 italic">"The Glitter Moth was seen near the waterfall. It left behind a trail of purple dust." — Agent Meera</p>
+            </div>
+            <div class="iridescent-card p-12 rounded-[50px] border-b-8 border-blue-100 flex flex-col justify-center items-center text-center">
+                <h3 class="typewriter text-3xl font-bold mb-6 text-blue-400">Active Scouts</h3>
+                <div class="text-8xl font-black text-slate-800 mb-4" id="member-count">3</div>
+                <p class="text-xl text-gray-400 font-medium">Ready to welcome you!</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- PHASE 1: QUESTIONS -->
+    <div id="view-portal" class="hidden-view min-h-screen bg-white py-24 px-6 relative z-10">
+        <div class="max-w-2xl mx-auto">
+            <div class="mb-20">
+                <h2 class="text-6xl font-black typewriter mb-6">Phase 1: <br>The Dossier</h2>
+                <p class="text-xl text-gray-400">Tell us about your secret zoologist life.</p>
+            </div>
+
+            <form id="membership-form" class="space-y-16">
+                <div class="space-y-12">
+                    <div>
+                        <label class="text-xs font-black text-pink-400 uppercase tracking-widest block mb-3">01. What's your real name?</label>
+                        <input type="text" id="form-name" required placeholder="Full Name" class="input-minimal">
+                    </div>
+                    <div>
+                        <label class="text-xs font-black text-pink-400 uppercase tracking-widest block mb-3">02. Pick a Secret Code-Name</label>
+                        <input type="text" id="form-nickname" required placeholder="e.g. Pixel_Panda" class="input-minimal">
+                    </div>
+                    <div>
+                        <label class="text-xs font-black text-pink-400 uppercase tracking-widest block mb-3">03. What is your Secret Power?</label>
+                        <input type="text" id="form-power" placeholder="Talking to moths, invisibility..." class="input-minimal">
+                    </div>
+                    <div>
+                        <label class="text-xs font-black text-pink-400 uppercase tracking-widest block mb-3">04. Tell us a secret about you</label>
+                        <textarea id="form-bio" placeholder="I once saw a tree octopus..." class="w-full bg-slate-50 rounded-3xl p-10 text-xl outline-none focus:ring-4 focus:ring-pink-100 min-h-[200px] border-none"></textarea>
+                    </div>
+                </div>
+
+                <button type="button" onclick="goToAvatar()" class="w-full bg-black text-white py-8 rounded-[2.5rem] font-black text-2xl uppercase tracking-widest shadow-2xl hover:bg-pink-500 transition-all">
+                    Next: Create Your Character
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- PHASE 2: AVATAR CREATOR -->
+    <div id="view-avatar" class="hidden-view min-h-screen bg-slate-50 py-16 px-6 relative z-10">
+        <div class="max-w-6xl mx-auto">
+            <div class="mb-12 flex flex-col md:flex-row justify-between items-center gap-6">
+                <div>
+                    <h2 class="text-5xl font-black typewriter">Phase 2: <br>The Dressing Room</h2>
+                    <p class="text-xl text-gray-400 mt-2">Design your scout before heading into the field.</p>
+                </div>
+                <div class="flex bg-white p-2 rounded-3xl shadow-xl border border-gray-100">
+                    <button id="btn-girl" onclick="setGender('girl')" class="px-10 py-4 rounded-2xl font-black text-lg bg-pink-400 text-white transition-all">GIRL</button>
+                    <button id="btn-boy" onclick="setGender('boy')" class="px-10 py-4 rounded-2xl font-black text-lg text-gray-400 hover:text-black transition-all">BOY</button>
+                </div>
+            </div>
+
+            <div class="character-creator">
+                <!-- Avatar Preview (Stage) -->
+                <div class="stage-area">
+                    <div id="avatar-preview-box" class="w-[350px] h-[500px]">
+                        <!-- Advanced Cartoon Character SVG -->
+                        <svg viewBox="0 0 100 160" class="w-full h-full">
+                            <!-- Background Aura -->
+                            <circle cx="50" cy="80" r="60" fill="white" fill-opacity="0.5" />
+                            
+                            <!-- Base Body (Skin) -->
+                            <!-- Legs -->
+                            <rect id="part-leg-l" x="38" y="120" width="8" height="30" rx="4" fill="#ffe0bd" />
+                            <rect id="part-leg-r" x="54" y="120" width="8" height="30" rx="4" fill="#ffe0bd" />
+                            <!-- Arms -->
+                            <rect id="part-arm-l" x="22" y="65" width="8" height="35" rx="4" fill="#ffe0bd" transform="rotate(10, 26, 65)" />
+                            <rect id="part-arm-r" x="70" y="65" width="8" height="35" rx="4" fill="#ffe0bd" transform="rotate(-10, 74, 65)" />
+                            <!-- Hands -->
+                            <circle id="part-hand-l" cx="20" cy="100" r="5" fill="#ffe0bd" />
+                            <circle id="part-hand-r" cx="80" cy="100" r="5" fill="#ffe0bd" />
+                            
+                            <!-- Head & Neck -->
+                            <rect id="part-neck" x="46" y="50" width="8" height="12" fill="#ffe0bd" />
+                            <path id="part-face" d="M30 35 Q30 15 50 15 Q70 15 70 35 Q70 55 50 55 Q30 55 30 35" fill="#ffe0bd" />
+                            
+                            <!-- Clothing: Bottoms (Pants/Skirt) -->
+                            <path id="cloth-bottom" d="M35 100 L65 100 L68 125 L32 125 Z" fill="#334155" />
+                            
+                            <!-- Clothing: Top (Shirt) -->
+                            <path id="cloth-top" d="M28 60 Q50 50 72 60 L78 110 L22 110 Z" fill="#ff85a1" />
+                            <rect id="cloth-sleeve-l" x="22" y="60" width="10" height="20" rx="2" fill="#ff85a1" transform="rotate(10, 26, 60)" />
+                            <rect id="cloth-sleeve-r" x="68" y="60" width="10" height="20" rx="2" fill="#ff85a1" transform="rotate(-10, 74, 60)" />
+
+                            <!-- Face Details (Eyes, Nose, Mouth) -->
+                            <!-- Eyes with pupils and highlights -->
+                            <g id="face-eyes">
+                                <circle cx="42" cy="35" r="4" fill="white" />
+                                <circle id="eye-pupil-l" cx="42" cy="35" r="2" fill="#333" />
+                                <circle cx="43" cy="34" r="0.8" fill="white" />
+                                
+                                <circle cx="58" cy="35" r="4" fill="white" />
+                                <circle id="eye-pupil-r" cx="58" cy="35" r="2" fill="#333" />
+                                <circle cx="59" cy="34" r="0.8" fill="white" />
+                            </g>
+                            <!-- Nose -->
+                            <path d="M49 42 Q50 44 51 42" stroke="#d4a373" fill="none" stroke-width="1" stroke-linecap="round" />
+                            <!-- Mouth -->
+                            <path id="face-mouth" d="M44 48 Q50 52 56 48" stroke="#333" stroke-width="1.5" fill="none" stroke-linecap="round" />
+
+                            <!-- Hair Layer -->
+                            <path id="hair-back" d="" fill="#4a3000" />
+                            <path id="hair-front" d="" fill="#4a3000" />
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Closet Area -->
+                <div class="closet-area">
+                    <div class="space-y-10">
+                        <!-- Skin Section -->
+                        <section>
+                            <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Skin Tone</h4>
+                            <div class="flex gap-4">
+                                <div class="swatch" style="background: #ffe0bd" onclick="updatePart('skin', '#ffe0bd')"></div>
+                                <div class="swatch" style="background: #eecfb4" onclick="updatePart('skin', '#eecfb4')"></div>
+                                <div class="swatch" style="background: #955e36" onclick="updatePart('skin', '#955e36')"></div>
+                                <div class="swatch" style="background: #4b2c20" onclick="updatePart('skin', '#4b2c20')"></div>
+                            </div>
+                        </section>
+
+                        <!-- Hairstyle Section -->
+                        <section>
+                            <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Hairstyles</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="closet-item active" id="hair-short-btn" onclick="updatePart('hair', 'short')">Clean Short</div>
+                                <div class="closet-item" id="hair-long-btn" onclick="updatePart('hair', 'long')">Long & Flowy</div>
+                                <div class="closet-item" id="hair-buns-btn" onclick="updatePart('hair', 'buns')">Double Buns</div>
+                                <div class="closet-item" id="hair-messy-btn" onclick="updatePart('hair', 'messy')">Messy spikes</div>
+                            </div>
+                        </section>
+
+                        <!-- Hair Color Section -->
+                        <section>
+                            <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Hair Color</h4>
+                            <div class="flex gap-4">
+                                <div class="swatch" style="background: #4a3000" onclick="updatePart('hairColor', '#4a3000')"></div>
+                                <div class="swatch" style="background: #f1c40f" onclick="updatePart('hairColor', '#f1c40f')"></div>
+                                <div class="swatch" style="background: #e74c3c" onclick="updatePart('hairColor', '#e74c3c')"></div>
+                                <div class="swatch" style="background: #a55eea" onclick="updatePart('hairColor', '#a55eea')"></div>
+                            </div>
+                        </section>
+
+                        <!-- Outfit Section -->
+                        <section>
+                            <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Field Uniform</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="closet-item active" onclick="updatePart('outfit', 'pink')">Pink Ranger</div>
+                                <div class="closet-item" onclick="updatePart('outfit', 'blue')">Deep Sea</div>
+                                <div class="closet-item" onclick="updatePart('outfit', 'green')">Forest Camo</div>
+                                <div class="closet-item" onclick="updatePart('outfit', 'black')">Night Agent</div>
+                            </div>
+                        </section>
+
+                        <button onclick="finishEnrollment()" class="w-full bg-pink-400 text-white py-6 rounded-3xl font-black text-xl uppercase tracking-widest shadow-2xl hover:scale-105 transition-transform active:scale-95">
+                            COMPLETE ENROLLMENT ✨
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DIRECTORY VIEW -->
+    <div id="view-members" class="hidden-view min-h-screen bg-white py-24 px-6 relative z-10">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex justify-between items-end mb-20">
+                <div>
+                    <h2 class="text-7xl font-black typewriter text-slate-800 tracking-tighter leading-none">THE <br><span class="text-pink-400">SOCIETY.</span></h2>
+                    <p class="text-xl text-gray-400 mt-4">Authorized field zoologists currently on active duty.</p>
+                </div>
+                <button onclick="showView('main')" class="text-sm font-black text-gray-400 hover:text-black uppercase tracking-widest">Close Files</button>
+            </div>
+            
+            <div id="member-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA & STATE ---
+        let avatarState = {
+            gender: 'girl',
+            skin: '#ffe0bd',
+            hair: 'short',
+            hairColor: '#4a3000',
+            outfit: 'pink'
+        };
+
+        let members = [
+            { 
+                nickname: 'Meera', 
+                power: 'Unicorn Sight', 
+                bio: 'Founder of the club and lead zoologist. Looking for the sparkle trail!', 
+                avatar: { gender: 'girl', skin: '#eecfb4', hair: 'buns', hairColor: '#a55eea', outfit: 'blue' } 
+            },
+            { 
+                nickname: 'Alice', 
+                power: 'Rainbow Paint', 
+                bio: 'I found Alice! She is here with her field gear on and ready to hunt octopuses.', 
+                avatar: { gender: 'girl', skin: '#ffe0bd', hair: 'long', hairColor: '#f1c40f', outfit: 'pink' } 
+            },
+            { 
+                nickname: 'ShadowScout', 
+                power: 'Total Silence', 
+                bio: 'I specialize in tracking forest cryptids during the new moon.', 
+                avatar: { gender: 'boy', skin: '#955e36', hair: 'messy', hairColor: '#4a3000', outfit: 'black' } 
+            }
+        ];
+
+        // --- NAVIGATION ---
+        function showView(viewName) {
+            document.querySelectorAll('div[id^="view-"]').forEach(v => v.classList.add('hidden-view'));
+            document.getElementById('view-' + viewName).classList.remove('hidden-view');
+            window.scrollTo(0, 0);
+        }
+
+        function goToAvatar() {
+            if(!document.getElementById('form-name').value || !document.getElementById('form-nickname').value) {
+                alert("The Dossier requires your name and nickname!");
+                return;
+            }
+            showView('avatar');
+        }
+
+        // --- AVATAR LOGIC ---
+        function setGender(g) {
+            avatarState.gender = g;
+            const girlBtn = document.getElementById('btn-girl');
+            const boyBtn = document.getElementById('btn-boy');
+            
+            if(g === 'girl') {
+                girlBtn.className = "px-10 py-4 rounded-2xl font-black text-lg bg-pink-400 text-white transition-all shadow-lg";
+                boyBtn.className = "px-10 py-4 rounded-2xl font-black text-lg text-gray-400 hover:text-black transition-all";
+                // Update specific girl styles
+                document.getElementById('face-mouth').setAttribute('d', 'M44 48 Q50 52 56 48');
+            } else {
+                boyBtn.className = "px-10 py-4 rounded-2xl font-black text-lg bg-pink-400 text-white transition-all shadow-lg";
+                girlBtn.className = "px-10 py-4 rounded-2xl font-black text-lg text-gray-400 hover:text-black transition-all";
+                // Update specific boy styles
+                document.getElementById('face-mouth').setAttribute('d', 'M45 49 L55 49');
+            }
+            updateAvatarPreview();
+        }
+
+        const hairstyles = {
+            short: { front: "M35 25 Q50 10 65 25 L68 35 Q50 30 32 35 Z", back: "" },
+            long: { front: "M35 25 Q50 10 65 25", back: "M30 35 L22 80 Q50 90 78 80 L70 35 Z" },
+            buns: { front: "M35 25 Q50 10 65 25", back: "M25 25 A8 8 0 1 1 35 25 M65 25 A8 8 0 1 1 75 25" },
+            messy: { front: "M30 25 L35 15 L45 22 L50 10 L55 22 L65 15 L70 25 Z", back: "" }
+        };
+
+        const outfits = {
+            pink: { top: "#ff85a1", bottom: "#334155" },
+            blue: { top: "#60a5fa", bottom: "#1e293b" },
+            green: { top: "#4ade80", bottom: "#14532d" },
+            black: { top: "#1e293b", bottom: "#020617" }
+        };
+
+        function updatePart(part, value) {
+            avatarState[part] = value;
+            // Update active state on closet items
+            if(part === 'hair' || part === 'outfit') {
+                event.target.parentElement.querySelectorAll('.closet-item').forEach(el => el.classList.remove('active'));
+                event.target.classList.add('active');
+            }
+            updateAvatarPreview();
+        }
+
+        function updateAvatarPreview() {
+            const state = avatarState;
+            // Skin
+            ['part-face', 'part-neck', 'part-arm-l', 'part-arm-r', 'part-leg-l', 'part-leg-r', 'part-hand-l', 'part-hand-r'].forEach(id => {
+                document.getElementById(id).setAttribute('fill', state.skin);
+            });
+            // Hair
+            document.getElementById('hair-front').setAttribute('d', hairstyles[state.hair].front);
+            document.getElementById('hair-front').setAttribute('fill', state.hairColor);
+            document.getElementById('hair-back').setAttribute('d', hairstyles[state.hair].back);
+            document.getElementById('hair-back').setAttribute('fill', state.hairColor);
+            // Clothes
+            document.getElementById('cloth-top').setAttribute('fill', outfits[state.outfit].top);
+            document.getElementById('cloth-sleeve-l').setAttribute('fill', outfits[state.outfit].top);
+            document.getElementById('cloth-sleeve-r').setAttribute('fill', outfits[state.outfit].top);
+            document.getElementById('cloth-bottom').setAttribute('fill', outfits[state.outfit].bottom);
+        }
+
+        function getAvatarSVG(state) {
+            const h = hairstyles[state.hair];
+            const o = outfits[state.outfit];
+            const mouthD = state.gender === 'girl' ? 'M44 48 Q50 52 56 48' : 'M45 49 L55 49';
+            
+            return `
+                <svg viewBox="0 0 100 160" class="w-full h-full">
+                    <path d="${h.back}" fill="${state.hairColor}" />
+                    <rect x="38" y="120" width="8" height="30" rx="4" fill="${state.skin}" />
+                    <rect x="54" y="120" width="8" height="30" rx="4" fill="${state.skin}" />
+                    <rect x="22" y="65" width="8" height="35" rx="4" fill="${state.skin}" transform="rotate(10, 26, 65)" />
+                    <rect x="70" y="65" width="8" height="35" rx="4" fill="${state.skin}" transform="rotate(-10, 74, 65)" />
+                    <circle cx="20" cy="100" r="5" fill="${state.skin}" />
+                    <circle cx="80" cy="100" r="5" fill="${state.skin}" />
+                    <rect x="46" y="50" width="8" height="12" fill="${state.skin}" />
+                    <path d="M30 35 Q30 15 50 15 Q70 15 70 35 Q70 55 50 55 Q30 55 30 35" fill="${state.skin}" />
+                    <path d="M35 100 L65 100 L68 125 L32 125 Z" fill="${o.bottom}" />
+                    <path d="M28 60 Q50 50 72 60 L78 110 L22 110 Z" fill="${o.top}" />
+                    <rect x="22" y="60" width="10" height="20" rx="2" fill="${o.top}" transform="rotate(10, 26, 60)" />
+                    <rect x="68" y="60" width="10" height="20" rx="2" fill="${o.top}" transform="rotate(-10, 74, 60)" />
+                    <g>
+                        <circle cx="42" cy="35" r="3" fill="white" /> <circle cx="42" cy="35" r="1.5" fill="#333" />
+                        <circle cx="58" cy="35" r="3" fill="white" /> <circle cx="58" cy="35" r="1.5" fill="#333" />
+                    </g>
+                    <path d="${mouthD}" stroke="#333" stroke-width="1.5" fill="none" stroke-linecap="round" />
+                    <path d="${h.front}" fill="${state.hairColor}" />
+                </svg>
+            `;
+        }
+
+        // --- SUBMISSION ---
+        function finishEnrollment() {
+            const newScout = {
+                nickname: document.getElementById('form-nickname').value,
+                power: document.getElementById('form-power').value || 'Unconfirmed',
+                bio: document.getElementById('form-bio').value || 'New to the field.',
+                avatar: JSON.parse(JSON.stringify(avatarState))
+            };
+            members.unshift(newScout);
+            renderMembers();
+            showView('members');
+        }
+
+        function renderMembers() {
+            const grid = document.getElementById('member-grid');
+            grid.innerHTML = '';
+            members.forEach(m => {
+                grid.innerHTML += `
+                    <div class="iridescent-card p-10 rounded-[50px] border-b-8 border-gray-100 group hover:border-pink-200 transition-all">
+                        <div class="w-40 h-40 bg-white rounded-full mx-auto mb-8 border-8 border-white shadow-xl overflow-hidden group-hover:scale-110 transition-transform">
+                            ${getAvatarSVG(m.avatar)}
+                        </div>
+                        <div class="text-center">
+                            <h3 class="text-3xl font-black typewriter text-slate-800">${m.nickname}</h3>
+                            <div class="inline-block bg-pink-50 text-pink-500 px-4 py-1 rounded-full text-xs font-black uppercase mt-2 mb-6 tracking-widest">${m.power}</div>
+                            <p class="text-gray-400 italic text-sm leading-relaxed">"${m.bio}"</p>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('member-count').innerText = members.length;
+        }
+
+        // --- BACKGROUND ---
+        const starContainer = document.getElementById('star-container');
+        for(let i=0; i<60; i++) {
+            const star = document.createElement('div');
+            star.style.position = 'absolute';
+            star.style.width = Math.random()*3 + 'px';
+            star.style.height = star.style.width;
+            star.style.background = '#fff';
+            star.style.borderRadius = '50%';
+            star.style.top = Math.random()*100 + '%';
+            star.style.left = Math.random()*100 + '%';
+            star.style.opacity = Math.random();
+            starContainer.appendChild(star);
+        }
+
+        // --- INIT ---
+        updateAvatarPreview();
+        renderMembers();
+    </script>
+</body>
+</html>
